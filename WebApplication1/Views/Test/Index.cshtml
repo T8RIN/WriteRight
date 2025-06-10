@@ -1,0 +1,54 @@
+@model WebApplication1.Controllers.TestViewModel
+@{
+    ViewData["Title"] = "Тест";
+}
+
+<div class="content-box text-center">
+    <h1 class="display-4">Тест по приставкам 2 класс</h1>
+    <div class="progress mb-4">
+        <div class="progress-bar" role="progressbar" 
+             style="width: @((Model.QuestionNumber * 100) / Model.TotalQuestions)%" 
+             aria-valuenow="@Model.QuestionNumber" 
+             aria-valuemin="0" 
+             aria-valuemax="@Model.TotalQuestions">
+            Вопрос @Model.QuestionNumber из @Model.TotalQuestions
+        </div>
+    </div>
+
+    <div class="question-box mb-4 p-3 border rounded">
+        <h3 class="mb-3">@Model.CurrentQuestion.Question</h3>
+        <form method="post" action="@Url.Action("NextQuestion")">
+            <input type="hidden" name="currentQuestionId" value="@Model.CurrentQuestion.Id" />
+            <div class="options-container">
+                @for (int i = 0; i < Model.CurrentQuestion.Options.Length; i++)
+                {
+                    <div class="option-item mb-2">
+                        <button type="submit" name="selectedAnswer" value="@i" 
+                                class="btn btn-primary w-100">
+                            @Model.CurrentQuestion.Options[i]
+                        </button>
+                    </div>
+                }
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function checkAnswer(questionId, selectedAnswer) {
+            $.post('/Test/CheckAnswer', { questionId: questionId, selectedAnswer: selectedAnswer })
+                .done(function(response) {
+                    const resultDiv = $(`#result-${questionId}`);
+                    if (response.isCorrect) {
+                        resultDiv.html('<div class="alert alert-success">Правильно!</div>');
+                    } else {
+                        resultDiv.html('<div class="alert alert-danger">Неправильно. Попробуйте еще раз!</div>');
+                    }
+                })
+                .fail(function() {
+                    alert('Произошла ошибка при проверке ответа');
+                });
+        }
+    </script>
+} 

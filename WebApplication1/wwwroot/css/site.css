@@ -1,0 +1,213 @@
+/* Your site CSS goes here */
+
+:root {
+    --main-blue: #007bff; /* Примерный синий цвет */
+    --header-purple: #6a0dad; /* Примерный фиолетовый цвет */
+    --input-green: #28a745; /* Примерный зеленый цвет */
+    --feedback-red: #dc3545; /* Красный для кнопки оценки */
+}
+
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    background-color: #343a40; /* Темный фон для всей страницы */
+    color: #fff; /* Белый текст по умолчанию */
+    font-family: Arial, sans-serif; /* Добавьте шрифт, если нужно */
+    line-height: 1.6; /* Улучшить межстрочный интервал */
+}
+
+.header-background {
+    position: relative;
+    background-image: url('/images/header_pattern.png');
+    background-color: var(--header-purple);
+    background-repeat: round;
+    padding: 1rem 0;
+    color: white;
+    z-index: 10;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.navbar {
+    background: transparent !important; /* убираем дублирующий фон */
+}
+
+.nav-link {
+    margin: 20px;
+    color: #ffffff !important;           /* белый текст */
+    font-weight: 650;
+    font-size: 1.5rem;
+    background-color: rgba(20, 10, 90, 0.36);
+    backdrop-filter: blur(8px);    /* блюр заднего фона */
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 200px;
+}
+
+.nav-link:hover {
+    color: #9cffa6 !important;
+    background-color: rgba(12, 7, 37, 0.27);
+    backdrop-filter: blur(15px);    /* блюр заднего фона */
+    -webkit-backdrop-filter: blur(15px);
+}
+
+.logo-mamba {
+    max-height: 60px;
+    display: block;
+    margin: 0.5rem auto;
+}
+
+
+.container {
+    /* Этот класс больше не используется для основных блоков контента, его можно удалить или переопределить, если он нужен для других целей */
+    /* background-color: var(--main-blue); */
+    /* border-radius: 10px; */
+    /* padding: 20px; */
+    /* margin-top: 20px; */
+}
+
+.text-center {
+    text-align: center; /* Убедитесь, что текст центрирован */
+}
+
+.text-center h1 {
+    color: #fff;
+    margin-bottom: 30px;
+    text-transform: uppercase; /* Если заголовки должны быть в верхнем регистре */
+}
+
+.form-group label {
+    color: #fff;
+    font-weight: bold;
+    display: block; /* Убедитесь, что метки занимают всю ширину */
+    text-align: left; /* Выравнивание метки по левому краю, если нужно */
+    margin-bottom: 5px;
+}
+
+.form-control {
+    background-color: var(--input-green);
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    width: 100%; /* Убедитесь, что поля ввода занимают всю ширину */
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-primary {
+    background-color: var(--main-blue);
+    border-color: var(--main-blue);
+    color: #fff;
+    padding: 10px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 5px;
+    width: 100%; /* Убедитесь, что кнопки занимают всю ширину контейнера */
+}
+
+.btn-primary:hover {
+    background-color: #218838; /* Немного темнее зеленого */
+    border-color: #218838;
+}
+
+.btn-danger {
+    background-color: var(--feedback-red);
+    border-color: var(--feedback-red);
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+}
+
+.btn-danger:hover {
+    background-color: #c82333; /* Немного темнее красного */
+    border-color: #c82333;
+}
+
+.card {
+    background-color: var(--main-blue);
+    border: none;
+}
+
+.card-text {
+    color: #fff;
+}
+
+.list-group-item {
+    background-color: var(--main-blue);
+    color: #fff;
+    border: none;
+    margin-bottom: 10px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+}
+
+.list-group-item .btn {
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 0;
+    font-size: 1.2rem;
+    text-align: left;
+    flex-grow: 1;
+}
+
+.list-group-item span.number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-right: 15px;
+    min-width: 30px;
+    text-align: center;
+}
+
+.content-box {
+    background-color: var(--main-blue);
+    border-radius: 10px;
+    padding: 30px;
+    margin: 20px auto;
+    max-width: 550px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+/* Удаляем весь медиа-запрос, так как он конфликтует с выравниванием в HTML */
+/* @media (min-width: 576px) {
+    .navbar-collapse.collapse {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+} */
