@@ -1,24 +1,43 @@
+@model WebApplication1.Models.User
+
 @{
     ViewData["Title"] = "Регистрация";
 }
 
-<div class="content-box">
-    <h1 class="display-4">РЕГИСТРАЦИЯ</h1>
-    <form class="text-start">
-        <div class="form-group mb-3">
-            <label for="fullName">ФИО</label>
-            <input type="text" class="form-control" id="fullName" placeholder="Иван иванов">
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <h2>Регистрация</h2>
+        <form asp-action="Index" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Name">Имя</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Password">Пароль</label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+            </div>
+        </form>
+        <div class="mt-3">
+            <p>Уже есть аккаунт? <a asp-action="Index" asp-controller="Login">Войти</a></p>
         </div>
-        <div class="form-group mb-3">
-            <label for="email">ПОЧТА</label>
-            <input type="email" class="form-control" id="email" placeholder="apupa@amogus.com">
-        </div>
-        <div class="form-group mb-4">
-            <label for="password">Пароль</label>
-            <input type="password" class="form-control" id="password" placeholder="*****">
-        </div>
-        <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-primary btn-lg">произвести создание</button>
-        </div>
-    </form>
-</div> 
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
