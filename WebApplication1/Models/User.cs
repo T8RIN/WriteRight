@@ -7,16 +7,15 @@ namespace WebApplication1.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Введите email")]
-        [EmailAddress(ErrorMessage = "Некорректный email")]
-        public string Email { get; set; }
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Введите пароль")]
-        [MinLength(6, ErrorMessage = "Пароль должен содержать минимум 6 символов")]
-        public string Password { get; set; }
+        [Required]
+        public string PasswordHash { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Введите имя")]
-        public string Name { get; set; }
+        [Required]
+        public string Username { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }

@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Models;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace WebApplication1.Controllers
 {
@@ -16,39 +14,36 @@ namespace WebApplication1.Controllers
             _context = context;
         }
 
-        [HttpGet]
         public IActionResult Index()
         {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(User model)
+        public async Task<IActionResult> Index(string email, string password, string username)
         {
-            if (ModelState.IsValid)
+            if (await _context.Users.AnyAsync(u => u.Email == email))
             {
-                if (await _context.Users.AnyAsync(u => u.Email == model.Email))
-                {
-                    ModelState.AddModelError("Email", "Этот email уже зарегистрирован");
-                    return View(model);
-                }
-
-                model.Password = HashPassword(model.Password);
-                _context.Users.Add(model);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Index", "Login");
+                ModelState.AddModelError("", "Пользователь с таким email уже существует");
+                return View();
             }
-            return View(model);
-        }
 
-        private string HashPassword(string password)
-        {
-            using (var sha256 = SHA256.Create())
+            var user = new User
             {
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
-            }
+                Email = email,
+                Username = username,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Login");
         }
     }
 }

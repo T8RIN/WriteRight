@@ -37,11 +37,11 @@ namespace WebApplication1.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("longtext");
 
