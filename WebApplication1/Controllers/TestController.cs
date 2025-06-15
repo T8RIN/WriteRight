@@ -1,145 +1,190 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebApplication1.Data;
 using WebApplication1.Models;
+using System.Security.Claims;
+using System.Text.Json;
 
 namespace WebApplication1.Controllers
 {
     public class TestController : Controller
     {
-        private readonly List<TestQuestion> _questions = new()
-        {
-            new TestQuestion
-            {
-                Id = 1,
-                Question = "Выберите слово с приставкой ПРИ-",
-                Options = new[] { "Приехать", "Преграда", "Привет", "Прекрасный" },
-                CorrectAnswerIndex = 0
-            },
-            new TestQuestion
-            {
-                Id = 2,
-                Question = "Выберите слово с приставкой ПРЕ-",
-                Options = new[] { "Прийти", "Преграда", "Привет", "Приехать" },
-                CorrectAnswerIndex = 1
-            },
-            new TestQuestion
-            {
-                Id = 3,
-                Question = "Выберите слово с приставкой ПРЕ-",
-                Options = new[] { "Прийти", "Привет", "Прекрасный", "Приехать" },
-                CorrectAnswerIndex = 2
-            },
-            new TestQuestion
-            {
-                Id = 4,
-                Question = "Выберите слово с приставкой ПРИ-",
-                Options = new[] { "Преграда", "Прекрасный", "Привет", "Преодолеть" },
-                CorrectAnswerIndex = 2
-            },
-            new TestQuestion
-            {
-                Id = 5,
-                Question = "Выберите слово с приставкой ПРЕ-",
-                Options = new[] { "Прийти", "Привет", "Приехать", "Преодолеть" },
-                CorrectAnswerIndex = 3
-            }
-        };
+        private readonly ApplicationDbContext _context;
 
-        public IActionResult Index()
+        public TestController(ApplicationDbContext context)
         {
-            // Начинаем с первого вопроса
-            return View(new TestViewModel 
-            { 
-                CurrentQuestion = _questions[0],
+            _context = context;
+        }
+
+        public async Task<IActionResult> Index(int courseId)
+        {
+            var course = await _context.Courses
+                                       .Include(c => c.TestQuestions)
+                                           .ThenInclude(q => q.Options)
+                                       .FirstOrDefaultAsync(c => c.Id == courseId);
+
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            var firstQuestion = course.TestQuestions.OrderBy(q => q.Id).FirstOrDefault();
+
+            if (firstQuestion == null)
+            {
+                return RedirectToAction("Details", "Courses", new { id = courseId }); // Если нет вопросов, возвращаемся к деталям курса
+            }
+
+            HttpContext.Session.Remove($"test_{courseId}_answers"); // Очищаем предыдущие ответы для нового теста
+
+            var viewModel = new TestViewModel
+            {
+                CourseId = courseId,
+                CurrentQuestion = firstQuestion,
                 QuestionNumber = 1,
-                TotalQuestions = _questions.Count,
+                TotalQuestions = course.TestQuestions.Count,
                 UserAnswers = new Dictionary<int, int>()
-            });
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
-        public IActionResult NextQuestion(int currentQuestionId, int? selectedAnswer)
+        public async Task<IActionResult> NextQuestion(int courseId, int currentQuestionId, int? selectedOptionId, int questionNumber)
         {
-            // Сохраняем ответ пользователя
-            if (selectedAnswer.HasValue)
+            var userAnswersJson = HttpContext.Session.GetString($"test_{courseId}_answers");
+            var userAnswers = userAnswersJson != null ? JsonSerializer.Deserialize<Dictionary<int, int>>(userAnswersJson) : new Dictionary<int, int>();
+
+            if (selectedOptionId.HasValue)
             {
-                HttpContext.Session.SetInt32($"answer_{currentQuestionId}", selectedAnswer.Value);
+                userAnswers[currentQuestionId] = selectedOptionId.Value;
+                HttpContext.Session.SetString($"test_{courseId}_answers", JsonSerializer.Serialize(userAnswers));
             }
 
-            // Находим индекс текущего вопроса
-            var currentIndex = _questions.FindIndex(q => q.Id == currentQuestionId);
+            var course = await _context.Courses
+                                       .Include(c => c.TestQuestions)
+                                           .ThenInclude(q => q.Options)
+                                       .FirstOrDefaultAsync(c => c.Id == courseId);
+
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            var questions = course.TestQuestions.OrderBy(q => q.Id).ToList();
+            var currentIndex = questions.FindIndex(q => q.Id == currentQuestionId);
+
             if (currentIndex == -1)
             {
-                return BadRequest("Вопрос не найден");
+                return BadRequest("Вопрос не найден.");
             }
 
-            // Если это был последний вопрос, показываем результаты
-            if (currentIndex == _questions.Count - 1)
+            if (currentIndex == questions.Count - 1)
             {
-                return RedirectToAction("Results");
+                return RedirectToAction("Results", new { courseId = courseId });
             }
 
-            // Переходим к следующему вопросу
-            var nextQuestion = _questions[currentIndex + 1];
-            return View("Index", new TestViewModel
+            var nextQuestion = questions[currentIndex + 1];
+            var viewModel = new TestViewModel
             {
+                CourseId = courseId,
                 CurrentQuestion = nextQuestion,
-                QuestionNumber = currentIndex + 2,
-                TotalQuestions = _questions.Count,
-                UserAnswers = GetUserAnswers()
-            });
-        }
-
-        public IActionResult Results()
-        {
-            var userAnswers = GetUserAnswers();
-            var correctAnswers = 0;
-
-            foreach (var question in _questions)
-            {
-                if (userAnswers.TryGetValue(question.Id, out var userAnswer) && 
-                    userAnswer == question.CorrectAnswerIndex)
-                {
-                    correctAnswers++;
-                }
-            }
-
-            return View(new TestResultsViewModel
-            {
-                TotalQuestions = _questions.Count,
-                CorrectAnswers = correctAnswers,
-                Questions = _questions,
+                QuestionNumber = questionNumber + 1,
+                TotalQuestions = questions.Count,
                 UserAnswers = userAnswers
-            });
+            };
+
+            return View("Index", viewModel);
         }
 
-        private Dictionary<int, int> GetUserAnswers()
+        public async Task<IActionResult> Results(int courseId)
         {
-            var answers = new Dictionary<int, int>();
-            foreach (var question in _questions)
+            var userAnswersJson = HttpContext.Session.GetString($"test_{courseId}_answers");
+            var userAnswers = userAnswersJson != null ? JsonSerializer.Deserialize<Dictionary<int, int>>(userAnswersJson) : new Dictionary<int, int>();
+
+            var course = await _context.Courses
+                                       .Include(c => c.TestQuestions)
+                                           .ThenInclude(q => q.Options)
+                                       .FirstOrDefaultAsync(c => c.Id == courseId);
+
+            if (course == null)
             {
-                var answer = HttpContext.Session.GetInt32($"answer_{question.Id}");
-                if (answer.HasValue)
+                return NotFound();
+            }
+
+            var questions = course.TestQuestions.ToList();
+            var correctAnswersCount = 0;
+
+            foreach (var question in questions)
+            {
+                if (userAnswers.TryGetValue(question.Id, out var selectedOptionId))
                 {
-                    answers[question.Id] = answer.Value;
+                    var correctOption = question.Options.FirstOrDefault(o => o.IsCorrect);
+                    if (correctOption != null && selectedOptionId == correctOption.Id)
+                    {
+                        correctAnswersCount++;
+                    }
                 }
             }
-            return answers;
+
+            var username = User.Identity?.Name; // Используем имя пользователя
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("Index", "Login"); // Перенаправляем на вход, если пользователь не авторизован
+            }
+            
+            var existingResult = await _context.UserTestResults.FirstOrDefaultAsync(r => r.UserId == username && r.CourseId == courseId);
+
+            if (existingResult != null)
+            {
+                existingResult.Score = correctAnswersCount;
+                existingResult.TotalQuestions = questions.Count;
+                existingResult.TestDate = DateTime.UtcNow;
+            }
+            else
+            {
+                var userTestResult = new UserTestResult
+                {
+                    UserId = username, // Используем имя пользователя как UserId
+                    CourseId = courseId,
+                    Score = correctAnswersCount,
+                    TotalQuestions = questions.Count,
+                    TestDate = DateTime.UtcNow
+                };
+                _context.UserTestResults.Add(userTestResult);
+            }
+            await _context.SaveChangesAsync();
+
+            HttpContext.Session.Remove($"test_{courseId}_answers"); // Очищаем сессию после сохранения результатов
+
+            var viewModel = new TestResultsViewModel
+            {
+                Course = course,
+                TotalQuestions = questions.Count,
+                CorrectAnswers = correctAnswersCount,
+                Questions = questions,
+                UserAnswers = userAnswers
+            };
+
+            return View(viewModel);
         }
     }
 
     public class TestViewModel
     {
-        public TestQuestion CurrentQuestion { get; set; }
+        public int CourseId { get; set; }
+        public TestQuestion CurrentQuestion { get; set; } = new TestQuestion();
         public int QuestionNumber { get; set; }
         public int TotalQuestions { get; set; }
-        public Dictionary<int, int> UserAnswers { get; set; }
+        public Dictionary<int, int> UserAnswers { get; set; } = new Dictionary<int, int>();
     }
 
     public class TestResultsViewModel
     {
+        public Course Course { get; set; } = new Course();
         public int TotalQuestions { get; set; }
         public int CorrectAnswers { get; set; }
-        public List<TestQuestion> Questions { get; set; }
-        public Dictionary<int, int> UserAnswers { get; set; }
+        public List<TestQuestion> Questions { get; set; } = new List<TestQuestion>();
+        public Dictionary<int, int> UserAnswers { get; set; } = new Dictionary<int, int>();
     }
 } 

@@ -6,6 +6,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Добавляем сервисы сессии
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Время неактивности сессии
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true; // Сделать сессионную куку необходимой
+});
+
 // Добавляем контекст базы данных
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(
@@ -37,8 +45,27 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// Добавляем использование сессий
+app.UseSession();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Заполнение базы данных начальными данными
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        await DataSeeder.SeedData(context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred seeding the DB.");
+    }
+}
 
 app.MapControllerRoute(
     name: "default",

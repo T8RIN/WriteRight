@@ -1,10 +1,60 @@
+@model IEnumerable<WebApplication1.Models.UserTestResult>
+
 @{
     ViewData["Title"] = "Статистика";
 }
 
-<div class="content-box text-center">
-    <h1 class="display-4">СТАТИСТИКА</h1>
-    <img src="/images/pie_chart_placeholder.png" class="img-fluid mb-3" alt="Круговая диаграмма" style="max-width: 300px;">
-    <p class="card-text">Учащийся демонстрирует уверенное владение материалом, успешно справляется с большинством заданий, проявляет активность в работе и стабильно показывает хорошие результаты.</p>
-    <button class="btn btn-danger btn-lg">Оцени сайт, если понравились результаты <i class="bi bi-arrow-right"></i><i class="bi bi-emoji-smile"></i></button>
-</div> 
+<div class="container mt-5">
+    <h1 class="display-4 text-center mb-5 text-purple">Ваша статистика</h1>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center" role="alert">
+            У вас пока нет пройденных тестов. <a asp-controller="Courses" asp-action="Index" class="alert-link">Начните проходить курсы</a>, чтобы увидеть здесь свои результаты!
+        </div>
+    }
+    else
+    {
+        <div class="row justify-content-center">
+            @foreach (var result in Model.OrderByDescending(r => r.TestDate))
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm statistic-card">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-purple">Курс: @result.Course.Title</h5>
+                            <p class="card-text flex-grow-1">
+                                Результат: <strong>@result.Score</strong> из <strong>@result.TotalQuestions</strong>
+                            </p>
+                            <p class="card-text text-muted">
+                                <small>Дата прохождения: @result.TestDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</small>
+                            </p>
+                            <div class="mt-auto text-center">
+                                <a asp-controller="Courses" asp-action="Details" asp-route-id="@result.CourseId" class="btn btn-sm btn-outline-purple w-100">
+                                    <i class="fas fa-book me-2"></i>К курсу
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .text-purple {
+        color: #9932CC !important; /* DarkOrchid */
+    }
+    .btn-outline-purple {
+        color: #9932CC;
+        border-color: #9932CC;
+    }
+    .btn-outline-purple:hover {
+        background-color: #9932CC;
+        color: white;
+    }
+    .statistic-card .card-body {
+        border: 1px solid #9932CC; 
+        border-radius: .25rem; 
+    }
+</style> 

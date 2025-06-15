@@ -24,6 +24,10 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2VydGlmaWNhdGUvSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/malikmuhametzanov/RiderProjects/WebApplication1/WebApplication1/Views/Courses/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ291cnNlcy9EZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/malikmuhametzanov/RiderProjects/WebApplication1/WebApplication1/Views/Courses/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ291cnNlcy9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

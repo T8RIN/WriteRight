@@ -4,7 +4,7 @@
 }
 
 <div class="content-box text-center">
-    <h1 class="display-4">Тест по приставкам 2 класс</h1>
+    <h1 class="display-4">Тест</h1>
     <div class="progress mb-4">
         <div class="progress-bar" role="progressbar" 
              style="width: @((Model.QuestionNumber * 100) / Model.TotalQuestions)%" 
@@ -16,16 +16,18 @@
     </div>
 
     <div class="question-box mb-4 p-3 border rounded">
-        <h3 class="mb-3">@Model.CurrentQuestion.Question</h3>
+        <h3 class="mb-3">@Model.CurrentQuestion.QuestionText</h3>
         <form method="post" action="@Url.Action("NextQuestion")">
+            <input type="hidden" name="courseId" value="@Model.CourseId" />
             <input type="hidden" name="currentQuestionId" value="@Model.CurrentQuestion.Id" />
+            <input type="hidden" name="questionNumber" value="@Model.QuestionNumber" />
             <div class="options-container">
-                @for (int i = 0; i < Model.CurrentQuestion.Options.Length; i++)
+                @foreach (var option in Model.CurrentQuestion.Options)
                 {
                     <div class="option-item mb-2">
-                        <button type="submit" name="selectedAnswer" value="@i" 
+                        <button type="submit" name="selectedOptionId" value="@option.Id" 
                                 class="btn btn-primary w-100">
-                            @Model.CurrentQuestion.Options[i]
+                            @option.OptionText
                         </button>
                     </div>
                 }

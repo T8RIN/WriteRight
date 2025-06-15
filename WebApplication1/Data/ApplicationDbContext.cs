@@ -11,6 +11,10 @@ namespace WebApplication1.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<TestQuestion> TestQuestions { get; set; }
+        public DbSet<TestOption> TestOptions { get; set; }
+        public DbSet<UserTestResult> UserTestResults { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
