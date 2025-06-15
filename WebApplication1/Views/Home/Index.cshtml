@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Добро пожаловать в WriteRight";
+}
+
+<style>
+    .text-purple {
+        color: #9932CC !important; /* DarkOrchid */
+    }
+    .btn-purple {
+        background-color: #9932CC;
+        border-color: #9932CC;
+        color: white;
+    }
+    .btn-purple:hover {
+        background-color: #7B2A99;
+        border-color: #7B2A99;
+    }
+</style>
+
+<div class="container-fluid bg-dark text-white text-center py-5 my-5 shadow-lg rounded-3">
+    <h1 class="display-3 mb-4">Добро пожаловать в <span class="text-purple">WriteRight</span>!</h1>
+    <p class="lead">
+        Ваш ключ к совершенству в русском языке. <br/>
+        Готовьтесь к экзаменам, улучшайте грамотность и открывайте новые горизонты в мире слов.
+    </p>
+    <hr class="my-4 bg-light">
+    <p class="fs-5">
+        Присоединяйтесь к тысячам учеников, которые уже добились успеха с WriteRight!
+    </p>
+    <div class="mt-4">
+        <a class="btn btn-purple btn-lg me-3" asp-area="" asp-controller="Registration" asp-action="Index" role="button">
+            Начать бесплатно
+        </a>
+        <a class="btn btn-outline-light btn-lg" asp-area="" asp-controller="Login" asp-action="Index" role="button">
+            Уже есть аккаунт? Войти
+        </a>
+    </div>
+</div>
