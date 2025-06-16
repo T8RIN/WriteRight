@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/WebApplication1.styles.css" asp-append-version="true"/>
 </head>
-<body style="background: #fae7ff">
+<body >
 <header class="header-background">
     <nav class="navbar navbar-dark navbar-expand-sm">
         <div class="container-fluid">
@@ -41,8 +41,8 @@
                         </li>
                         @await Component.InvokeAsync("CertificateEligibility")
                         <li class="nav-item">
-                            <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-link nav-link">Выйти</button>
+                            <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline" id="logoutForm">
+                                <button type="submit" class="btn btn-link nav-link" id="logoutButton">Выйти</button>
                             </form>
                         </li>
                     }
@@ -63,5 +63,15 @@
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
+
+<script>
+    document.getElementById('logoutButton').addEventListener('click', function(e) {
+        e.preventDefault(); // Предотвращаем стандартную отправку формы
+        if (confirm('Вы уверены, что хотите выйти из аккаунта?')) {
+            document.getElementById('logoutForm').submit();
+        }
+    });
+</script>
+
 </body>
 </html>
