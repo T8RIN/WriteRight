@@ -22,11 +22,17 @@ namespace WebApplication1.ViewComponents
                 return View(false); // Пользователь не авторизован или ID недействителен
             }
 
-            var finalCourseId = 3; // Идентификатор итогового курса
+            var finalCourse = await _context.Courses.FirstOrDefaultAsync(c => c.IsFinalCourse);
+
+            if (finalCourse == null)
+            {
+                // Если итоговый курс не найден, сертификат не может быть выдан
+                return View(false);
+            }
 
             // Проверяем, есть ли хотя бы один результат с проходным баллом (80%) для итогового курса
             var hasPassedFinalCourse = await _context.UserTestResults
-                .Where(r => r.UserId == userId && r.CourseId == finalCourseId)
+                .Where(r => r.UserId == userId && r.CourseId == finalCourse.Id)
                 .AnyAsync(r => (double)r.Score / r.TotalQuestions >= 0.8);
 
             return View(hasPassedFinalCourse);

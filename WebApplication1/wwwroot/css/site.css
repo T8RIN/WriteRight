@@ -1,7 +1,7 @@
 /* Your site CSS goes here */
 
 :root {
-    --main-blue: #007bff; /* Примерный синий цвет */
+    --main-blue: #5bacff; /* Примерный синий цвет */
     --header-purple: #6a0dad; /* Примерный фиолетовый цвет */
     --input-green: #28a745; /* Примерный зеленый цвет */
     --feedback-red: #dc3545; /* Красный для кнопки оценки */
@@ -32,7 +32,7 @@ body {
     padding: 1rem 0;
     color: white;
     z-index: 10;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .navbar {
@@ -41,11 +41,11 @@ body {
 
 .nav-link {
     margin: 20px;
-    color: #ffffff !important;           /* белый текст */
+    color: #ffffff !important; /* белый текст */
     font-weight: 650;
     font-size: 1.5rem;
     background-color: rgba(20, 10, 90, 0.36);
-    backdrop-filter: blur(8px);    /* блюр заднего фона */
+    backdrop-filter: blur(8px); /* блюр заднего фона */
     -webkit-backdrop-filter: blur(8px);
     border-radius: 200px;
 }
@@ -53,7 +53,7 @@ body {
 .nav-link:hover {
     color: #9cffa6 !important;
     background-color: rgba(12, 7, 37, 0.27);
-    backdrop-filter: blur(15px);    /* блюр заднего фона */
+    backdrop-filter: blur(15px); /* блюр заднего фона */
     -webkit-backdrop-filter: blur(15px);
 }
 
@@ -61,15 +61,6 @@ body {
     max-height: 60px;
     display: block;
     margin: 0.5rem auto;
-}
-
-
-.container {
-    /* Этот класс больше не используется для основных блоков контента, его можно удалить или переопределить, если он нужен для других целей */
-    /* background-color: var(--main-blue); */
-    /* border-radius: 10px; */
-    /* padding: 20px; */
-    /* margin-top: 20px; */
 }
 
 .text-center {
@@ -182,25 +173,25 @@ body {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+    color: var(--bs-secondary-color);
+    text-align: end;
 }
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+    text-align: start;
 }
 
 /* Дополнительный стиль для текста описания курса на белом фоне */

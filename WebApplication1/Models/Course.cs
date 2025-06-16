@@ -23,5 +23,8 @@ namespace WebApplication1.Models
         public Course? PrerequisiteCourse { get; set; } // Навигационное свойство
 
         public ICollection<TestQuestion> TestQuestions { get; set; } = new List<TestQuestion>();
+
+        // Новое свойство для обозначения итогового курса
+        public bool IsFinalCourse { get; set; } = false;
     }
 } 
