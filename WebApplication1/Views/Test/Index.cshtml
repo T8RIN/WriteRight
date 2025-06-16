@@ -7,12 +7,11 @@
     <h1 class="display-4">Тест</h1>
     <div class="progress mb-4">
         <div class="progress-bar" role="progressbar"
-             style="width: @((Model.QuestionNumber * 100) / Model.TotalQuestions)%;color: #00ffb2"
+             style="width: @((Model.QuestionNumber * 100) / Model.TotalQuestions)%;"
              aria-valuenow="@Model.QuestionNumber"
              aria-valuemin="0"
-             aria-valuemax="@Model.TotalQuestions">
-            Вопрос @Model.QuestionNumber из @Model.TotalQuestions
-        </div>
+             aria-valuemax="@Model.TotalQuestions"></div>
+        <span class="progress-text">Вопрос @Model.QuestionNumber из @Model.TotalQuestions</span>
     </div>
 
     <div class="question-box mb-4 p-3 border rounded">

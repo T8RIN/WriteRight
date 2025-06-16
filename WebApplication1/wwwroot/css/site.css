@@ -207,3 +207,23 @@ body {
         align-items: center !important;
     }
 } */
+
+.progress {
+    position: relative; /* Добавляем позиционирование для абсолютного размещения текста */
+    height: 30px; /* Задаем фиксированную высоту прогресс-бара */
+    background-color: rgba(0, 0, 0, 0.2); /* Немного затемняем фон для контраста */
+}
+
+.progress-bar {
+    height: 100%; /* Убеждаемся, что бар заполняет всю высоту родителя */
+}
+
+.progress-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    color: #fff; /* Белый цвет текста для контраста */
+    font-weight: bold;
+    line-height: 30px; /* Центрируем текст по вертикали */
+    z-index: 1; /* Гарантируем, что текст находится поверх бара */
+}
