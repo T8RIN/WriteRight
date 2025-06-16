@@ -5,10 +5,11 @@
 }
 
 <div class="container mt-5">
-    <h1 class="display-4 text-center mb-5 text-purple">Наши Курсы</h1>
+    <h1 class="display-4 text-center mb-5 text-purple" style="
+        background: #07ffff;
+        border-radius: 15px;">Наши Курсы</h1>
 
-    @if (TempData["ErrorMessage"] != null)
-    {
+    @if (TempData["ErrorMessage"] != null) {
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
             @TempData["ErrorMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -16,8 +17,7 @@
     }
 
     <div class="row">
-        @foreach (var courseProgress in Model)
-        {
+        @foreach (var courseProgress in Model) {
             var course = courseProgress.Course;
             var isLocked = !courseProgress.IsPrerequisiteMet && course.PrerequisiteCourseId.HasValue; // Курс заблокирован, если есть предварительный и он не пройден
             var cardClass = isLocked ? "course-card-locked" : "";
@@ -33,24 +33,26 @@
 
                         <div class="course-progress-info mt-2">
                             <p class="mb-1">Попыток: <strong>@courseProgress.Attempts</strong></p>
-                            <p class="mb-1">Макс. результат: <strong>@courseProgress.MaxScorePercentage.ToString("F2")%</strong></p>
-                            <p class="mb-1">Статус: <strong class="@(courseProgress.IsCompleted ? "text-success" : "text-danger")">
-                                @(courseProgress.IsCompleted ? "Пройден" : "Не пройден")
-                            </strong></p>
+                            <p class="mb-1">Макс. результат:
+                                <strong>@courseProgress.MaxScorePercentage.ToString("F2")%</strong></p>
+                            <p class="mb-1">Статус: <strong
+                                    class="@(courseProgress.IsCompleted ? "text-success" : "text-danger")">
+                                    @(courseProgress.IsCompleted ? "Пройден" : "Не пройден")
+                                </strong></p>
                         </div>
 
-                        @if (isLocked)
-                        {
+                        @if (isLocked) {
                             <div class="mt-auto text-center">
-                                <a href="#" class="btn btn-secondary mt-3 w-100" disabled data-bs-toggle="tooltip" data-bs-placement="top" title="@tooltipText">
+                                <a href="#" class="btn btn-secondary mt-3 w-100" disabled data-bs-toggle="tooltip"
+                                   data-bs-placement="top" title="@tooltipText">
                                     <i class="fas fa-lock me-2"></i>@buttonText
                                 </a>
                             </div>
                         }
-                        else
-                        {
+                        else {
                             <div class="mt-auto">
-                                <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-primary mt-3 w-100 btn-purple">
+                                <a asp-action="Details" asp-route-id="@course.Id"
+                                   class="btn btn-primary mt-3 w-100 btn-purple">
                                     @buttonText
                                 </a>
                             </div>
@@ -65,29 +67,33 @@
 <style>
     .text-purple {
         color: #9932CC !important;
-        background: #07ffff;
-        border-radius: 15px;
     }
+
     .btn-purple {
         background-color: #9932CC;
         border-color: #9932CC;
         color: white;
     }
+
     .btn-purple:hover {
         background-color: #7B2A99;
         border-color: #7B2A99;
     }
+
     .course-card {
         border: none;
     }
+
     .course-card .card-body {
         border: 1px solid #9932CC;
         border-radius: .25rem;
     }
+
     .course-card-locked {
         opacity: 0.6;
         pointer-events: none; /* Отключаем события мыши для всей карточки */
     }
+
     .course-card-locked .card-title, .course-card-locked .card-text,
     .course-card-locked .course-progress-info {
         color: #6c757d !important; /* Приглушенный текст для заблокированных */

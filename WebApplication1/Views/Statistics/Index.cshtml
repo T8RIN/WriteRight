@@ -5,19 +5,19 @@
 }
 
 <div class="container mt-5">
-    <h1 class="display-4 text-center mb-5 text-purple">Ваша статистика</h1>
+    <h1 class="display-4 text-center mb-5 text-purple" style="
+        background: #07ffff;
+        border-radius: 15px;">Ваша статистика</h1>
 
-    @if (Model == null || !Model.Any())
-    {
+    @if (Model == null || !Model.Any()) {
         <div class="alert alert-info text-center" role="alert">
-            У вас пока нет пройденных тестов. <a asp-controller="Courses" asp-action="Index" class="alert-link">Начните проходить курсы</a>, чтобы увидеть здесь свои результаты!
+            У вас пока нет пройденных тестов. <a asp-controller="Courses" asp-action="Index" class="alert-link">Начните
+                проходить курсы</a>, чтобы увидеть здесь свои результаты!
         </div>
     }
-    else
-    {
+    else {
         <div class="row justify-content-center">
-            @foreach (var result in Model.OrderByDescending(r => r.CourseId))
-            {
+            @foreach (var result in Model.OrderByDescending(r => r.CourseId)) {
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 shadow-sm statistic-card">
                         <div class="card-body d-flex flex-column">
@@ -32,7 +32,8 @@
                                 Статус: <strong>@(result.IsCompleted ? "Пройден" : "Не пройден")</strong>
                             </p>
                             <div class="mt-auto text-center">
-                                <a asp-controller="Courses" asp-action="Details" asp-route-id="@result.CourseId" class="btn btn-sm btn-outline-purple w-100">
+                                <a asp-controller="Courses" asp-action="Details" asp-route-id="@result.CourseId"
+                                   class="btn btn-sm btn-outline-purple w-100">
                                     <i class="fas fa-book me-2"></i>К курсу
                                 </a>
                             </div>
@@ -47,19 +48,20 @@
 <style>
     .text-purple {
         color: #9932CC !important;
-        background: #07ffff;
-        border-radius: 15px;
     }
+
     .btn-outline-purple {
         color: #9932CC;
         border-color: #9932CC;
     }
+
     .btn-outline-purple:hover {
         background-color: #9932CC;
         color: white;
     }
+
     .statistic-card .card-body {
-        border: 1px solid #9932CC; 
-        border-radius: .25rem; 
+        border: 1px solid #9932CC;
+        border-radius: .25rem;
     }
 </style> 
