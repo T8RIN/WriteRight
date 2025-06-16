@@ -64,7 +64,7 @@ body {
 }
 
 .text-center {
-    text-align: center; /* Убедитесь, что текст центрирован */
+    text-align: center;
 }
 
 .text-center h1 {
@@ -127,6 +127,12 @@ body {
 .card {
     background-color: var(--main-blue);
     border: none;
+}
+
+.card2 {
+    background-color: #002c3a;
+    border: none;
+    border-radius: 20px;
 }
 
 .card-text {
