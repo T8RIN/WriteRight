@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication1.Models
 {
@@ -15,6 +16,11 @@ namespace WebApplication1.Models
         public string Description { get; set; } = string.Empty;
 
         public string Content { get; set; } = string.Empty;
+
+        public int? PrerequisiteCourseId { get; set; } // Внешний ключ для предыдущего курса
+
+        [ForeignKey("PrerequisiteCourseId")]
+        public Course? PrerequisiteCourse { get; set; } // Навигационное свойство
 
         public ICollection<TestQuestion> TestQuestions { get; set; } = new List<TestQuestion>();
     }

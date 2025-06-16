@@ -11,11 +11,7 @@ namespace WebApplication1.Models
         public string QuestionText { get; set; } = string.Empty;
 
         public int CourseId { get; set; }
-
-        [ForeignKey("CourseId")]
-        [Required]
-        public Course Course { get; set; }
-
-        public ICollection<TestOption> Options { get; set; } = new List<TestOption>();
+        public Course Course { get; set; } = null!;
+        public List<TestOption> Options { get; set; } = new();
     }
 } 

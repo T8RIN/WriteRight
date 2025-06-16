@@ -1,4 +1,4 @@
-@model IEnumerable<WebApplication1.Models.UserTestResult>
+@model IEnumerable<WebApplication1.Models.StatisticsCourseProgressViewModel>
 
 @{
     ViewData["Title"] = "Статистика";
@@ -16,17 +16,20 @@
     else
     {
         <div class="row justify-content-center">
-            @foreach (var result in Model.OrderByDescending(r => r.TestDate))
+            @foreach (var result in Model.OrderByDescending(r => r.CourseId))
             {
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 shadow-sm statistic-card">
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title text-purple">Курс: @result.Course.Title</h5>
+                            <h5 class="card-title text-purple">Курс: @result.CourseName</h5>
                             <p class="card-text flex-grow-1">
-                                Результат: <strong>@result.Score</strong> из <strong>@result.TotalQuestions</strong>
+                                Средний балл: <strong>@result.AverageScore</strong>
                             </p>
-                            <p class="card-text text-muted">
-                                <small>Дата прохождения: @result.TestDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</small>
+                            <p class="card-text">
+                                Попыток пройдено: <strong>@result.Attempts</strong>
+                            </p>
+                            <p class="card-text">
+                                Статус: <strong>@(result.IsCompleted ? "Пройден" : "Не пройден")</strong>
                             </p>
                             <div class="mt-auto text-center">
                                 <a asp-controller="Courses" asp-action="Details" asp-route-id="@result.CourseId" class="btn btn-sm btn-outline-purple w-100">

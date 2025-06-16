@@ -81,6 +81,52 @@ namespace WebApplication1.Controllers
 
             if (currentIndex == questions.Count - 1)
             {
+                // Если это последний вопрос, подсчитываем общий результат и сохраняем его
+                var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out var userId))
+                {
+                    return RedirectToAction("Index", "Login");
+                }
+
+                var correctAnswersCount = 0;
+                foreach (var qa in userAnswers)
+                {
+                    var question = await _context.TestQuestions.Include(q => q.Options).FirstOrDefaultAsync(q => q.Id == qa.Key);
+                    if (question != null)
+                    {
+                        var correctOption = question.Options.FirstOrDefault(o => o.IsCorrect);
+                        if (correctOption != null && qa.Value == correctOption.Id)
+                        {
+                            correctAnswersCount++;
+                        }
+                    }
+                }
+
+                var existingResult = await _context.UserTestResults.FirstOrDefaultAsync(r => r.UserId == userId && r.CourseId == courseId);
+                if (existingResult != null)
+                {
+                    existingResult.Score = correctAnswersCount;
+                    existingResult.TotalQuestions = questions.Count;
+                    existingResult.TestDate = DateTime.UtcNow;
+                    existingResult.CompletedAt = DateTime.UtcNow;
+                }
+                else
+                {
+                    var userTestResult = new UserTestResult
+                    {
+                        UserId = userId,
+                        CourseId = courseId,
+                        Score = correctAnswersCount,
+                        TotalQuestions = questions.Count,
+                        TestDate = DateTime.UtcNow,
+                        CompletedAt = DateTime.UtcNow
+                    };
+                    _context.UserTestResults.Add(userTestResult);
+                }
+                await _context.SaveChangesAsync();
+
+                HttpContext.Session.Remove($"test_{courseId}_answers"); // Очищаем сессию после сохранения результатов
+
                 return RedirectToAction("Results", new { courseId = courseId });
             }
 
@@ -99,71 +145,41 @@ namespace WebApplication1.Controllers
 
         public async Task<IActionResult> Results(int courseId)
         {
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out var userId))
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            var userResult = await _context.UserTestResults
+                .Include(r => r.Course)
+                .Include(r => r.User)
+                .FirstOrDefaultAsync(r => r.UserId == userId && r.CourseId == courseId);
+
+            if (userResult == null)
+            {
+                // Вместо перенаправления, отображаем страницу ошибки с сообщением
+                return View("Error", new ErrorViewModel { RequestId = "Результат теста для этого курса не найден. Пожалуйста, убедитесь, что вы прошли тест." });
+            }
+
+            var course = userResult.Course;
+            var questions = await _context.TestQuestions
+                .Include(q => q.Options)
+                .Where(q => q.CourseId == courseId)
+                .ToListAsync();
+
+            // Поскольку результаты сохраняются только после завершения, ищем предыдущие ответы в сессии только для отображения,
+            // но основные данные берем из UserTestResult.
             var userAnswersJson = HttpContext.Session.GetString($"test_{courseId}_answers");
             var userAnswers = userAnswersJson != null ? JsonSerializer.Deserialize<Dictionary<int, int>>(userAnswersJson) : new Dictionary<int, int>();
-
-            var course = await _context.Courses
-                                       .Include(c => c.TestQuestions)
-                                           .ThenInclude(q => q.Options)
-                                       .FirstOrDefaultAsync(c => c.Id == courseId);
-
-            if (course == null)
-            {
-                return NotFound();
-            }
-
-            var questions = course.TestQuestions.ToList();
-            var correctAnswersCount = 0;
-
-            foreach (var question in questions)
-            {
-                if (userAnswers.TryGetValue(question.Id, out var selectedOptionId))
-                {
-                    var correctOption = question.Options.FirstOrDefault(o => o.IsCorrect);
-                    if (correctOption != null && selectedOptionId == correctOption.Id)
-                    {
-                        correctAnswersCount++;
-                    }
-                }
-            }
-
-            var username = User.Identity?.Name; // Используем имя пользователя
-            if (string.IsNullOrEmpty(username))
-            {
-                return RedirectToAction("Index", "Login"); // Перенаправляем на вход, если пользователь не авторизован
-            }
-            
-            var existingResult = await _context.UserTestResults.FirstOrDefaultAsync(r => r.UserId == username && r.CourseId == courseId);
-
-            if (existingResult != null)
-            {
-                existingResult.Score = correctAnswersCount;
-                existingResult.TotalQuestions = questions.Count;
-                existingResult.TestDate = DateTime.UtcNow;
-            }
-            else
-            {
-                var userTestResult = new UserTestResult
-                {
-                    UserId = username, // Используем имя пользователя как UserId
-                    CourseId = courseId,
-                    Score = correctAnswersCount,
-                    TotalQuestions = questions.Count,
-                    TestDate = DateTime.UtcNow
-                };
-                _context.UserTestResults.Add(userTestResult);
-            }
-            await _context.SaveChangesAsync();
-
-            HttpContext.Session.Remove($"test_{courseId}_answers"); // Очищаем сессию после сохранения результатов
 
             var viewModel = new TestResultsViewModel
             {
                 Course = course,
-                TotalQuestions = questions.Count,
-                CorrectAnswers = correctAnswersCount,
+                TotalQuestions = userResult.TotalQuestions,
+                CorrectAnswers = userResult.Score,
                 Questions = questions,
-                UserAnswers = userAnswers
+                UserAnswers = userAnswers // Сессия очищается после завершения, поэтому здесь могут быть только ответы текущей сессии, если тест был прерван
             };
 
             return View(viewModel);

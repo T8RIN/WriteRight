@@ -203,6 +203,11 @@ body {
   text-align: start;
 }
 
+/* Дополнительный стиль для текста описания курса на белом фоне */
+.card.bg-white .card-text.lead {
+    color: #212529 !important; /* Темный цвет для контраста */
+}
+
 /* Удаляем весь медиа-запрос, так как он конфликтует с выравниванием в HTML */
 /* @media (min-width: 576px) {
     .navbar-collapse.collapse {

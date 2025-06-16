@@ -23,6 +23,18 @@ namespace WebApplication1.Data
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
+
+            modelBuilder.Entity<Course>()
+                .HasOne(c => c.PrerequisiteCourse)
+                .WithMany()
+                .HasForeignKey(c => c.PrerequisiteCourseId)
+                .IsRequired(false);
+            
+            modelBuilder.Entity<UserTestResult>()
+                .HasOne(utr => utr.User)
+                .WithMany()
+                .HasForeignKey(utr => utr.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

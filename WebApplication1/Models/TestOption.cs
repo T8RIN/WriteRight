@@ -15,7 +15,6 @@ namespace WebApplication1.Models
         public int TestQuestionId { get; set; }
 
         [ForeignKey("TestQuestionId")]
-        [Required]
-        public TestQuestion TestQuestion { get; set; }
+        public TestQuestion TestQuestion { get; set; } = null!;
     }
 } 

@@ -8,18 +8,20 @@ namespace WebApplication1.Models
         public int Id { get; set; }
 
         [Required]
-        public string UserId { get; set; } = string.Empty; // Инициализируем строкой по умолчанию
+        public int UserId { get; set; } // Изменено на int
+
+        [ForeignKey("UserId")]
+        public User? User { get; set; } // Навигационное свойство к User (сделано nullable)
 
         public int CourseId { get; set; }
-
-        [ForeignKey("CourseId")]
-        [Required] // Добавляем required, так как это навигационное свойство, которое должно быть
-        public Course Course { get; set; }
+        public Course Course { get; set; } = null!;
 
         public int Score { get; set; } // Количество правильных ответов
 
         public int TotalQuestions { get; set; } // Общее количество вопросов в тесте
 
         public DateTime TestDate { get; set; }
+
+        public DateTime CompletedAt { get; set; }
     }
 } 

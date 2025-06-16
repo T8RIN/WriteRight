@@ -20,6 +20,7 @@ namespace WebApplication1.Data
             {
                 new Course
                 {
+                    Id = 1,
                     Title = "Основы русского языка",
                     Description = "Базовый курс по грамматике и правописанию русского языка.",
                     Content = "<p>В этом курсе вы изучите:</p><ul><li>Основы грамматики</li><li>Правила правописания</li><li>Пунктуацию</li><li>Основные части речи</li></ul>",
@@ -148,9 +149,11 @@ namespace WebApplication1.Data
                 },
                 new Course
                 {
+                    Id = 2,
                     Title = "Пунктуация в русском языке",
                     Description = "Подробный курс по правилам расстановки знаков препинания.",
                     Content = "<p>В этом курсе вы освоите:</p><ul><li>Знаки препинания в простом и сложном предложении</li><li>Правила оформления прямой речи</li><li>Особенности пунктуации в разных стилях</li></ul>",
+                    PrerequisiteCourseId = 1,
                     TestQuestions = new List<TestQuestion>
                     {
                         new TestQuestion
@@ -264,9 +267,11 @@ namespace WebApplication1.Data
                 },
                 new Course
                 {
+                    Id = 3,
                     Title = "Лексика и фразеология",
                     Description = "Курс посвящен изучению словарного состава русского языка и устойчивых выражений.",
                     Content = "<p>Вы узнаете о:</p><ul><li>Лексическом значении слов</li><li>Синонимах, антонимах, омонимах</li><li>Фразеологизмах и их роли в речи</li><li>Историзмах и архаизмах</li></ul>",
+                    PrerequisiteCourseId = 2,
                     TestQuestions = new List<TestQuestion>
                     {
                         new TestQuestion
@@ -383,9 +388,11 @@ namespace WebApplication1.Data
                 },
                 new Course
                 {
+                    Id = 4,
                     Title = "Синтаксис и морфология",
                     Description = "Курс, посвященный изучению строения предложений и словоизменения.",
                     Content = "<p>Вы изучите:</p><ul><li>Части речи и члены предложения</li><li>Виды предложений</li><li>Сложные синтаксические конструкции</li><li>Морфологический разбор</li></ul>",
+                    PrerequisiteCourseId = 3,
                     TestQuestions = new List<TestQuestion>
                     {
                         new TestQuestion
@@ -492,9 +499,11 @@ namespace WebApplication1.Data
                 },
                 new Course
                 {
+                    Id = 5,
                     Title = "Стилистика и культура речи",
                     Description = "Курс для повышения уровня владения русским языком и развития коммуникативных навыков.",
                     Content = "<p>Вы научитесь:</p><ul><li>Различать функциональные стили речи</li><li>Использовать языковые средства выразительности</li><li>Избегать речевых ошибок</li><li>Повышать культуру устной и письменной речи</li></ul>",
+                    PrerequisiteCourseId = 4,
                     TestQuestions = new List<TestQuestion>
                     {
                         new TestQuestion
@@ -605,6 +614,117 @@ namespace WebApplication1.Data
                                 new TestOption { OptionText = "Разделение предложения на несколько частей для усиления выразительности.", IsCorrect = true },
                                 new TestOption { OptionText = "Объединение нескольких простых предложений в одно сложное.", IsCorrect = false },
                                 new TestOption { OptionText = "Использование только коротких предложений.", IsCorrect = false }
+                            }
+                        }
+                    }
+                },
+                new Course
+                {
+                    Id = 6,
+                    Title = "Итоговый курс по русскому языку",
+                    Description = "Итоговый курс для проверки всех полученных знаний и получения сертификата.",
+                    Content = "<p>Этот курс охватывает все темы, изученные в предыдущих курсах. Успешное прохождение теста открывает доступ к сертификату.</p>",
+                    PrerequisiteCourseId = 5, 
+                    TestQuestions = new List<TestQuestion>
+                    {
+                        new TestQuestion
+                        {
+                            QuestionText = "Какое слово образовано от глагола?",
+                            Options = new List<TestOption>
+                            {
+                                new TestOption { OptionText = "Писатель", IsCorrect = true },
+                                new TestOption { OptionText = "Книга", IsCorrect = false },
+                                new TestOption { OptionText = "Красивый", IsCorrect = false }
+                            }
+                        },
+                        new TestQuestion
+                        {
+                            QuestionText = "Выберите существительное общего рода.",
+                            Options = new List<TestOption>
+                            {
+                                new TestOption { OptionText = "Сирота", IsCorrect = true },
+                                new TestOption { OptionText = "Стол", IsCorrect = false },
+                                new TestOption { OptionText = "Девочка", IsCorrect = false }
+                            }
+                        },
+                        new TestQuestion
+                        {
+                            QuestionText = "В каком ряду все слова являются однокоренными?",
+                            Options = new List<TestOption>
+                            {
+                                new TestOption { OptionText = "Лес, лесник, лесной", IsCorrect = true },
+                                new TestOption { OptionText = "Вода, водный, водить", IsCorrect = false },
+                                new TestOption { OptionText = "Гора, горка, горевать", IsCorrect = false }
+                            }
+                        },
+                        new TestQuestion
+                        {
+                            QuestionText = "Какое из этих предложений является побудительным?",
+                            Options = new List<TestOption>
+                            {
+                                new TestOption { OptionText = "Закрой дверь!", IsCorrect = true },
+                                new TestOption { OptionText = "Сегодня хорошая погода.", IsCorrect = false },
+                                new TestOption { OptionText = "Кто пришел?", IsCorrect = false }
+                            }
+                        },
+                        new TestQuestion
+                        {
+                            QuestionText = "Укажите, в каком слове пропущена буква Ъ.",
+                            Options = new List<TestOption>
+                            {
+                                new TestOption { OptionText = "Об_явление", IsCorrect = true },
+                                new TestOption { OptionText = "Под_езд", IsCorrect = false },
+                                new TestOption { OptionText = "С_езд", IsCorrect = false }
+                            }
+                        },
+                        new TestQuestion
+                        {
+                            QuestionText = "В каком предложении тире поставлено между подлежащим и сказуемым?",
+                            Options = new List<TestOption>
+                            {
+                                new TestOption { OptionText = "Чтение - вот лучшее учение.", IsCorrect = true },
+                                new TestOption { OptionText = "На улице - дождь.", IsCorrect = false },
+                                new TestOption { OptionText = "Моя сестра - врач.", IsCorrect = true }
+                            }
+                        },
+                        new TestQuestion
+                        {
+                            QuestionText = "Какое слово является прилагательным в превосходной степени?",
+                            Options = new List<TestOption>
+                            {
+                                new TestOption { OptionText = "Красивейший", IsCorrect = true },
+                                new TestOption { OptionText = "Красивый", IsCorrect = false },
+                                new TestOption { OptionText = "Более красивый", IsCorrect = false }
+                            }
+                        },
+                        new TestQuestion
+                        {
+                            QuestionText = "Выберите несклоняемое существительное.",
+                            Options = new List<TestOption>
+                            {
+                                new TestOption { OptionText = "Метро", IsCorrect = true },
+                                new TestOption { OptionText = "Книга", IsCorrect = false },
+                                new TestOption { OptionText = "Стол", IsCorrect = false }
+                            }
+                        },
+                        new TestQuestion
+                        {
+                            QuestionText = "Какое предложение является односоставным назывным?",
+                            Options = new List<TestOption>
+                            {
+                                new TestOption { OptionText = "Морозное утро.", IsCorrect = true },
+                                new TestOption { OptionText = "На улице морозно.", IsCorrect = false },
+                                new TestOption { OptionText = "Мороз щиплет щеки.", IsCorrect = false }
+                            }
+                        },
+                        new TestQuestion
+                        {
+                            QuestionText = "Где в предложении нужна одна запятая: 'Он медленно и спокойно шел по улице.'?",
+                            Options = new List<TestOption>
+                            {
+                                new TestOption { OptionText = "Не нужна.", IsCorrect = true },
+                                new TestOption { OptionText = "После 'медленно'.", IsCorrect = false },
+                                new TestOption { OptionText = "После 'спокойно'.", IsCorrect = false }
                             }
                         }
                     }
