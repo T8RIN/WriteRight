@@ -1,3 +1,4 @@
+@model WebApplication1.Models.CertificateViewModel
 @{
     ViewData["Title"] = "Сертификат";
 }
@@ -7,30 +8,48 @@
         <div class="col-md-8">
             <div class="card border-0 shadow-lg">
                 <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <h1 class="display-4 text-purple">Сертификат</h1>
-                        <p class="lead">о прохождении курса</p>
-                    </div>
-                    
-                    <div class="text-center mb-5">
-                        <p class="h3">Настоящим удостоверяется, что</p>
-                        <p class="h2 text-purple">@User.Identity?.Name</p>
-                        <p class="h4">успешно завершил(а) курс</p>
-                        <p class="h3 text-purple">"Русский язык: путь к грамотности"</p>
-                    </div>
-                    
-                    <div class="row mt-5">
-                        <div class="col-6">
-                            <p class="mb-0">Дата выдачи:</p>
-                            <p class="h5">@DateTime.Now.ToString("dd.MM.yyyy")</p>
+                    @if (Model.HasPassedFinalCourse)
+                    {
+                        <div class="text-center mb-4">
+                            <h1 class="display-4 text-purple">Сертификат</h1>
+                            <p class="lead">о прохождении курса</p>
                         </div>
-                        <div class="col-6 text-end">
-                            <p class="mb-0">Подпись директора:</p>
-                            <p class="h5">_____________</p>
+
+                        <div class="text-center mb-5">
+                            <p class="h3">Настоящим удостоверяется, что</p>
+                            <p class="h2 text-purple">@User.Identity?.Name</p>
+                            <p class="h4">успешно завершил(а) курс</p>
+                            <p class="h3 text-purple">"Русский язык: путь к грамотности"</p>
                         </div>
-                    </div>
+
+                        <div class="row mt-5">
+                            <div class="col-6">
+                                <p class="mb-0">Дата выдачи:</p>
+                                <p class="h5">@DateTime.Now.ToString("dd.MM.yyyy")</p>
+                            </div>
+                            <div class="col-6 text-end">
+                                <p class="mb-0">Подпись директора:</p>
+                                <p class="h5">_____________</p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info text-center" role="alert">
+                            <h4 class="alert-heading">Внимание!</h4>
+                            <p>@Model.Message</p>
+                            <hr>
+                            <p class="mb-0">Пожалуйста, пройдите <a asp-controller="Courses" asp-action="Index" class="alert-link">итоговый курс</a>, чтобы получить сертификат.</p>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+<style>
+    .text-purple {
+        color: #9932CC !important; /* DarkOrchid */
+    }
+</style> 

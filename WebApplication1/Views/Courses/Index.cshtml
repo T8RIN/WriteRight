@@ -1,4 +1,4 @@
-@model IEnumerable<WebApplication1.Models.Course>
+@model IEnumerable<WebApplication1.Models.CourseProgressViewModel>
 
 @{
     ViewData["Title"] = "Курсы";
@@ -7,19 +7,54 @@
 <div class="container mt-5">
     <h1 class="display-4 text-center mb-5 text-purple">Наши Курсы</h1>
 
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <div class="row">
-        @foreach (var course in Model)
+        @foreach (var courseProgress in Model)
         {
+            var course = courseProgress.Course;
+            var isLocked = !courseProgress.IsPrerequisiteMet && course.PrerequisiteCourseId.HasValue; // Курс заблокирован, если есть предварительный и он не пройден
+            var cardClass = isLocked ? "course-card-locked" : "";
+            var buttonClass = isLocked ? "disabled" : "";
+            var buttonText = isLocked ? "Заблокировано" : "Подробнее";
+            var tooltipText = isLocked ? $"Для доступа пройдите: {course.PrerequisiteCourse?.Title}" : "";
+
             <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 shadow-sm course-card">
+                <div class="card h-100 shadow-sm course-card @cardClass">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title text-purple">@course.Title</h5>
                         <p class="card-text flex-grow-1">@course.Description</p>
-                        <div class="mt-auto">
-                            <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-primary mt-3 w-100 btn-purple">
-                                Подробнее
-                            </a>
+
+                        <div class="course-progress-info mt-2">
+                            <p class="mb-1">Попыток: <strong>@courseProgress.Attempts</strong></p>
+                            <p class="mb-1">Макс. результат: <strong>@courseProgress.MaxScorePercentage.ToString("F2")%</strong></p>
+                            <p class="mb-1">Статус: <strong class="@(courseProgress.IsCompleted ? "text-success" : "text-danger")">
+                                @(courseProgress.IsCompleted ? "Пройден" : "Не пройден")
+                            </strong></p>
                         </div>
+
+                        @if (isLocked)
+                        {
+                            <div class="mt-auto text-center">
+                                <a href="#" class="btn btn-secondary mt-3 w-100" disabled data-bs-toggle="tooltip" data-bs-placement="top" title="@tooltipText">
+                                    <i class="fas fa-lock me-2"></i>@buttonText
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="mt-auto">
+                                <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-primary mt-3 w-100 btn-purple">
+                                    @buttonText
+                                </a>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -41,10 +76,27 @@
         border-color: #7B2A99;
     }
     .course-card {
-        border: none; /* Убираем стандартную границу карточки */
+        border: none;
     }
     .course-card .card-body {
-        border: 1px solid #9932CC; /* Добавляем фиолетовую границу к телу карточки */
-        border-radius: .25rem; /* Скругляем углы */
+        border: 1px solid #9932CC;
+        border-radius: .25rem;
     }
-</style> 
+    .course-card-locked {
+        opacity: 0.6;
+        pointer-events: none; /* Отключаем события мыши для всей карточки */
+    }
+    .course-card-locked .card-title, .course-card-locked .card-text,
+    .course-card-locked .course-progress-info {
+        color: #6c757d !important; /* Приглушенный текст для заблокированных */
+    }
+</style>
+
+@section Scripts {
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+} 
