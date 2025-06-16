@@ -12,6 +12,6 @@ namespace WebApplication1.Models
 
         public int CourseId { get; set; }
         public Course Course { get; set; } = null!;
-        public List<TestOption> Options { get; set; } = new();
+        public List<TestOption> Options { get; set; } = [];
     }
 } 

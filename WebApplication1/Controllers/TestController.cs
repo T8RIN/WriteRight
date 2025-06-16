@@ -203,18 +203,18 @@ namespace WebApplication1.Controllers
     public class TestViewModel
     {
         public int CourseId { get; set; }
-        public TestQuestion CurrentQuestion { get; set; } = new TestQuestion();
+        public TestQuestion CurrentQuestion { get; set; } = new();
         public int QuestionNumber { get; set; }
         public int TotalQuestions { get; set; }
-        public Dictionary<int, int> UserAnswers { get; set; } = new Dictionary<int, int>();
+        public Dictionary<int, int> UserAnswers { get; set; } = new();
     }
 
     public class TestResultsViewModel
     {
-        public Course Course { get; set; } = new Course();
+        public Course Course { get; set; } = new();
         public int TotalQuestions { get; set; }
         public int CorrectAnswers { get; set; }
-        public List<TestQuestion> Questions { get; set; } = new List<TestQuestion>();
-        public Dictionary<int, int> UserAnswers { get; set; } = new Dictionary<int, int>();
+        public List<TestQuestion> Questions { get; set; } = [];
+        public Dictionary<int, int> UserAnswers { get; set; } = new();
     }
 } 
