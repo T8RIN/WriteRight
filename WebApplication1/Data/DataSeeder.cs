@@ -6,11 +6,8 @@ namespace WebApplication1.Data {
         public static async Task SeedData(ApplicationDbContext context) {
             await context.Database.EnsureCreatedAsync();
 
-            // Проверяем, есть ли уже курсы
             if (await context.Courses.AnyAsync()) {
-                context.TestQuestions.RemoveRange(context.TestQuestions);
-                context.TestOptions.RemoveRange(context.TestOptions);
-                context.Courses.RemoveRange(context.Courses);
+                return;
             }
 
             var courses = new List<Course> {
