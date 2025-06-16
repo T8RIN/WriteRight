@@ -6,10 +6,10 @@
 <div class="content-box text-center">
     <h1 class="display-4">Тест</h1>
     <div class="progress mb-4">
-        <div class="progress-bar" role="progressbar" 
-             style="width: @((Model.QuestionNumber * 100) / Model.TotalQuestions)%" 
-             aria-valuenow="@Model.QuestionNumber" 
-             aria-valuemin="0" 
+        <div class="progress-bar" role="progressbar"
+             style="width: @((Model.QuestionNumber * 100) / Model.TotalQuestions)%;color: #00ffb2"
+             aria-valuenow="@Model.QuestionNumber"
+             aria-valuemin="0"
              aria-valuemax="@Model.TotalQuestions">
             Вопрос @Model.QuestionNumber из @Model.TotalQuestions
         </div>
@@ -18,14 +18,13 @@
     <div class="question-box mb-4 p-3 border rounded">
         <h3 class="mb-3">@Model.CurrentQuestion.QuestionText</h3>
         <form method="post" action="@Url.Action("NextQuestion")">
-            <input type="hidden" name="courseId" value="@Model.CourseId" />
-            <input type="hidden" name="currentQuestionId" value="@Model.CurrentQuestion.Id" />
-            <input type="hidden" name="questionNumber" value="@Model.QuestionNumber" />
+            <input type="hidden" name="courseId" value="@Model.CourseId"/>
+            <input type="hidden" name="currentQuestionId" value="@Model.CurrentQuestion.Id"/>
+            <input type="hidden" name="questionNumber" value="@Model.QuestionNumber"/>
             <div class="options-container">
-                @foreach (var option in Model.CurrentQuestion.Options)
-                {
+                @foreach (var option in Model.CurrentQuestion.Options) {
                     <div class="option-item mb-2">
-                        <button type="submit" name="selectedOptionId" value="@option.Id" 
+                        <button type="submit" name="selectedOptionId" value="@option.Id"
                                 class="btn btn-primary w-100">
                             @option.OptionText
                         </button>
@@ -39,8 +38,8 @@
 @section Scripts {
     <script>
         function checkAnswer(questionId, selectedAnswer) {
-            $.post('/Test/CheckAnswer', { questionId: questionId, selectedAnswer: selectedAnswer })
-                .done(function(response) {
+            $.post('/Test/CheckAnswer', {questionId: questionId, selectedAnswer: selectedAnswer})
+                .done(function (response) {
                     const resultDiv = $(`#result-${questionId}`);
                     if (response.isCorrect) {
                         resultDiv.html('<div class="alert alert-success">Правильно!</div>');
@@ -48,7 +47,7 @@
                         resultDiv.html('<div class="alert alert-danger">Неправильно. Попробуйте еще раз!</div>');
                     }
                 })
-                .fail(function() {
+                .fail(function () {
                     alert('Произошла ошибка при проверке ответа');
                 });
         }

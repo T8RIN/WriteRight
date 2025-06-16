@@ -8,7 +8,9 @@ namespace WebApplication1.Data {
 
             // Проверяем, есть ли уже курсы
             if (await context.Courses.AnyAsync()) {
-                return; // База данных уже содержит данные
+                context.TestQuestions.RemoveRange(context.TestQuestions);
+                context.TestOptions.RemoveRange(context.TestOptions);
+                context.Courses.RemoveRange(context.Courses);
             }
 
             var courses = new List<Course> {
