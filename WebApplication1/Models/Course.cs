@@ -20,11 +20,10 @@ namespace WebApplication1.Models
         public int? PrerequisiteCourseId { get; set; } // Внешний ключ для предыдущего курса
 
         [ForeignKey("PrerequisiteCourseId")]
-        public Course? PrerequisiteCourse { get; set; } // Навигационное свойство
+        public Course? PrerequisiteCourse { get; set; }
 
         public ICollection<TestQuestion> TestQuestions { get; set; } = new List<TestQuestion>();
 
-        // Новое свойство для обозначения итогового курса
         public bool IsFinalCourse { get; set; } = false;
     }
 } 
