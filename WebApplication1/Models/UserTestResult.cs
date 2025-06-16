@@ -23,5 +23,8 @@ namespace WebApplication1.Models
         public DateTime TestDate { get; set; }
 
         public DateTime CompletedAt { get; set; }
+
+        // Новое поле для хранения ответов пользователя в формате JSON
+        public string? UserAnswersJson { get; set; }
     }
 } 

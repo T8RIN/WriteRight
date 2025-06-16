@@ -89,40 +89,50 @@ namespace WebApplication1.Controllers
                 }
 
                 var correctAnswersCount = 0;
+                Console.WriteLine($"\n--- Начинаем подсчет результатов теста для курса {courseId} ---");
                 foreach (var qa in userAnswers)
                 {
+                    Console.WriteLine($"Обрабатываем вопрос ID: {qa.Key}, выбранный ответ ID: {qa.Value}");
                     var question = await _context.TestQuestions.Include(q => q.Options).FirstOrDefaultAsync(q => q.Id == qa.Key);
                     if (question != null)
                     {
                         var correctOption = question.Options.FirstOrDefault(o => o.IsCorrect);
-                        if (correctOption != null && qa.Value == correctOption.Id)
+                        if (correctOption != null)
                         {
-                            correctAnswersCount++;
+                            Console.WriteLine($"   Правильный ответ для вопроса {qa.Key} имеет ID: {correctOption.Id}");
+                            if (qa.Value == correctOption.Id)
+                            {
+                                correctAnswersCount++;
+                                Console.WriteLine($"   Ответ правильный! Текущий счет: {correctAnswersCount}");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"   Ответ неправильный. Выбрано {qa.Value}, Правильно {correctOption.Id}");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"   Внимание: Для вопроса {qa.Key} не найден правильный вариант ответа.");
                         }
                     }
-                }
-
-                var existingResult = await _context.UserTestResults.FirstOrDefaultAsync(r => r.UserId == userId && r.CourseId == courseId);
-                if (existingResult != null)
-                {
-                    existingResult.Score = correctAnswersCount;
-                    existingResult.TotalQuestions = questions.Count;
-                    existingResult.TestDate = DateTime.UtcNow;
-                    existingResult.CompletedAt = DateTime.UtcNow;
-                }
-                else
-                {
-                    var userTestResult = new UserTestResult
+                    else
                     {
-                        UserId = userId,
-                        CourseId = courseId,
-                        Score = correctAnswersCount,
-                        TotalQuestions = questions.Count,
-                        TestDate = DateTime.UtcNow,
-                        CompletedAt = DateTime.UtcNow
-                    };
-                    _context.UserTestResults.Add(userTestResult);
+                        Console.WriteLine($"   Внимание: Вопрос с ID {qa.Key} не найден в базе данных.");
+                    }
                 }
+                Console.WriteLine($"--- Подсчет завершен. Общий правильный счет: {correctAnswersCount} ---");
+
+                var userTestResult = new UserTestResult
+                {
+                    UserId = userId,
+                    CourseId = courseId,
+                    Score = correctAnswersCount,
+                    TotalQuestions = questions.Count,
+                    TestDate = DateTime.UtcNow,
+                    CompletedAt = DateTime.UtcNow,
+                    UserAnswersJson = JsonSerializer.Serialize(userAnswers)
+                };
+                _context.UserTestResults.Add(userTestResult);
                 await _context.SaveChangesAsync();
 
                 HttpContext.Session.Remove($"test_{courseId}_answers"); // Очищаем сессию после сохранения результатов
@@ -154,7 +164,9 @@ namespace WebApplication1.Controllers
             var userResult = await _context.UserTestResults
                 .Include(r => r.Course)
                 .Include(r => r.User)
-                .FirstOrDefaultAsync(r => r.UserId == userId && r.CourseId == courseId);
+                .Where(r => r.UserId == userId && r.CourseId == courseId)
+                .OrderByDescending(r => r.Id)
+                .FirstOrDefaultAsync();
 
             if (userResult == null)
             {
@@ -168,10 +180,12 @@ namespace WebApplication1.Controllers
                 .Where(q => q.CourseId == courseId)
                 .ToListAsync();
 
-            // Поскольку результаты сохраняются только после завершения, ищем предыдущие ответы в сессии только для отображения,
-            // но основные данные берем из UserTestResult.
-            var userAnswersJson = HttpContext.Session.GetString($"test_{courseId}_answers");
-            var userAnswers = userAnswersJson != null ? JsonSerializer.Deserialize<Dictionary<int, int>>(userAnswersJson) : new Dictionary<int, int>();
+            // Десериализуем ответы пользователя из UserTestResult
+            Dictionary<int, int> userAnswers = new Dictionary<int, int>();
+            if (!string.IsNullOrEmpty(userResult.UserAnswersJson))
+            {
+                userAnswers = JsonSerializer.Deserialize<Dictionary<int, int>>(userResult.UserAnswersJson) ?? new Dictionary<int, int>();
+            }
 
             var viewModel = new TestResultsViewModel
             {
@@ -179,7 +193,7 @@ namespace WebApplication1.Controllers
                 TotalQuestions = userResult.TotalQuestions,
                 CorrectAnswers = userResult.Score,
                 Questions = questions,
-                UserAnswers = userAnswers // Сессия очищается после завершения, поэтому здесь могут быть только ответы текущей сессии, если тест был прерван
+                UserAnswers = userAnswers
             };
 
             return View(viewModel);

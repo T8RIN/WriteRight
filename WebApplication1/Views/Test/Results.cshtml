@@ -20,34 +20,48 @@
     <div class="questions-review">
         @foreach (var question in Model.Questions)
         {
+            var userAnswerId = 0; // Инициализируем 0, если ответ не найден
+            Model.UserAnswers.TryGetValue(question.Id, out userAnswerId);
+            var correctOption = question.Options.FirstOrDefault(o => o.IsCorrect);
+
             <div class="question-review mb-4 p-4 border rounded shadow-sm">
                 <h4 class="mb-3">@question.QuestionText</h4>
                 <div class="options-review">
                     @foreach (var option in question.Options.OrderBy(o => o.Id))
                     {
-                        var isCorrectOption = option.IsCorrect;
-                        var isUserSelected = Model.UserAnswers.TryGetValue(question.Id, out var userAnswerId) && userAnswerId == option.Id;
-                        
+                        var userSelectedThisOption = (userAnswerId == option.Id);
+                        var isThisOptionCorrect = option.IsCorrect;
+
                         var optionClass = "";
-                        if (isCorrectOption)
+                        var iconMarkup = "";
+
+                        <!-- Debug Info: QuestionId=@question.Id, OptionId=@option.Id, UserAnswerId=@userAnswerId, UserSelectedThisOption=@userSelectedThisOption, IsThisOptionCorrect=@isThisOptionCorrect -->
+
+                        if (userSelectedThisOption)
                         {
-                            optionClass = "text-success bg-success-subtle"; // Правильный ответ
+                            if (isThisOptionCorrect)
+                            {
+                                // Пользователь выбрал правильный ответ
+                                optionClass = "text-success bg-success-subtle";
+                                iconMarkup = "<i class=\"fas fa-check-circle me-2\"></i>";
+                            }
+                            else
+                            {
+                                // Пользователь выбрал неправильный ответ
+                                optionClass = "text-danger bg-danger-subtle";
+                                iconMarkup = "<i class=\"fas fa-times-circle me-2\"></i>";
+                            }
                         }
-                        else if (isUserSelected)
+                        else if (correctOption != null && correctOption.Id == option.Id)
                         {
-                            optionClass = "text-danger bg-danger-subtle"; // Неправильный ответ пользователя
+                            // Это правильный ответ, и пользователь не выбирал его (т.е. пользователь ошибся)
+                            optionClass = "text-success bg-success-subtle";
+                            iconMarkup = "<i class=\"fas fa-check-circle me-2\"></i>";
                         }
 
                         <div class="option-review p-2 mb-2 @optionClass" 
                              style="border: 1px solid #dee2e6; border-radius: 4px;">
-                            @if (isCorrectOption)
-                            {
-                                <i class="fas fa-check-circle me-2"></i>
-                            }
-                            else if (isUserSelected && !isCorrectOption)
-                            {
-                                <i class="fas fa-times-circle me-2"></i>
-                            }
+                            @Html.Raw(iconMarkup)
                             @option.OptionText
                         </div>
                     }
